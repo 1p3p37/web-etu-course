@@ -42,9 +42,7 @@ env = jinja2.Environment(extensions=["jinja2.ext.i18n"])
 env.install_gettext_translations(translations)
 """
 
-
-
-#post
+# post
 """
 @app.get(f"/All1/", response_class=HTMLResponse)
 #async def All1(request: Request, locale: str = None ):
@@ -79,6 +77,8 @@ async def All2get(request: Request, same: str):
     return templates.TemplateResponse("index2.html", result)
 
 """
+
+
 @app.get("/All2/", response_class=HTMLResponse)
 async def all1(request: Request, locale: str = Query("en", description="Query inf")):
     print("{1}")
@@ -86,6 +86,7 @@ async def all1(request: Request, locale: str = Query("en", description="Query in
     result.update(languages[locale])
     print(result)
     return templates.TemplateResponse("index2.html", result)
+
 
 @app.post("/All2/")
 async def all2(request: Request, action: str = Form(...)):
@@ -106,7 +107,7 @@ async def all2(request: Request, action: str = Form(...)):
     return templates.TemplateResponse("index2.html", result)
 
 
-    """
+"""
     if action == 'eng-lang':
         print("1aBOBOBAAA BA")
         locale = default_fallback
@@ -179,7 +180,9 @@ async def trans_text():
                  "— No, but women sometimes say <Let's have another one>, but no student will say\n" \
                  "<I'll write another coursework>!"
     return trans_meme
-    """
+
+
+"""
 @app.get("/Text/en1", response_class=PlainTextResponse)
 async def trans1_text():
     meme = "— Писать курсач больнее, чем родить ребёнка. \n— <Ты когда-нибудь рожал ребенка?>\n" \
