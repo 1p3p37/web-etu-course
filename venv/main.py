@@ -2,6 +2,8 @@ import jinja2
 from fastapi import FastAPI, Request, Form, Query
 from fastapi.responses import HTMLResponse
 from fastapi.responses import PlainTextResponse
+from tortoise import Tortoise
+
 import H_p
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -9,6 +11,8 @@ from babel.plural import PluralRule
 import glob
 import json
 
+from etuWEB import models
+from etuWEB.models import User
 from typing import List
 
 import trans
@@ -79,8 +83,8 @@ async def All2get(request: Request, same: str):
 """
 
 
-@app.get("/All2/", response_class=HTMLResponse)
-async def all1(request: Request, locale: str = Query("en", description="Query inf")):
+@app.get("/memes/", response_class=HTMLResponse)
+async def memes_get(request: Request, locale: str = Query("en", description="Query inf")):
     print("{1}")
     result = {"request": request}
     result.update(languages[locale])
@@ -88,8 +92,8 @@ async def all1(request: Request, locale: str = Query("en", description="Query in
     return templates.TemplateResponse("index2.html", result)
 
 
-@app.post("/All2/")
-async def all2(request: Request, action: str = Form(...)):
+@app.post("/memes/")
+async def memes(request: Request, action: str = Form(...)):
     print("{2}")
     locale = default_fallback
     if action == 'eng-lang':
@@ -105,6 +109,20 @@ async def all2(request: Request, action: str = Form(...)):
         result = {"request": request}
         result.update(languages[locale])
     return templates.TemplateResponse("index2.html", result)
+
+@app.get("/memes/reg")
+async def reg():
+    print(1)
+    await models.runn()
+    print(2)
+    return "aboba"
+
+
+
+
+
+
+
 
 
 """
