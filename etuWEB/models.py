@@ -3,15 +3,20 @@ import sqlite3
 import tortoise.queryset
 from tortoise.fields import CharField
 from tortoise.functions import Count
+from tortoise.utils import get_schema_sql
 
 from core.db import sql_connection
 from sqlite3 import Error
 from tortoise import Model
 from pydantic import BaseModel
-from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
 from tortoise import Tortoise, fields, run_async
 from tortoise.models import Model
 from datetime import datetime
+
+from devtools import debug
+
+from pydantic import BaseModel, Field
 
 # from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
 '''
@@ -41,22 +46,47 @@ class User(Model):
         return self.username, self.email, self.password
 
 
+class User_in_chat(Model):
+    id = fields.IntField(pk=True, index=True)
+    user_name = fields.CharField(max_length=20, nullable=False, unique=True)
+    city = fields.CharField(max_length=100, null=False, default="Unspecified")
+    region = fields.CharField(max_length=100, null=False, default="Unspecified")
+    user_description = fields.TextField(null=True)
+    #logo = fields.CharField(max_length=200, null=False, default="static.papi4.jpg")
+    owner = fields.ForeignKeyField('models.User', related_name='user_ch')
+
+
 # user_pydanticIn will be used to create users since it allows
+
+
 # readOnly fields same for all the others
 user_pydantic = pydantic_model_creator(User, name="User", exclude=("is_verified",))
-user_pydanticIn = pydantic_model_creator(User, name="UserIn", exclude_readonly=True, exclude=("is_verified", 'join_date'))
-user_pydanticOut = pydantic_model_creator(User, name="UserOut", exclude=("password",))
+user_pydanticIn = pydantic_model_creator(User, name="UserIn", exclude_readonly=True,
+                                         exclude=("is_verified", 'join_date'))
+user_pydanticOut = pydantic_model_creator(User, name="UserOut")
 
+user_ch_pydantic = pydantic_model_creator(User_in_chat, name="User_in_chat")
+user_ch_pydanticIn = pydantic_model_creator(User_in_chat, name="User_in_chatIn", exclude_readonly=True)
+
+"""user = pydantic_model_creator(User)
+user1 = pydantic_queryset_creator(User)
 
 async def runn():
     print("aboba")
-    await Tortoise.init(db_url="sqlite://:memory:", modules={"models": ["__main__"]})
-    await Tortoise.generate_schemas()
-    user = await User.create(username="amogus", email="amogus1337@mail.ru", password="12345")
-    print(user_pydanticOut.)
-
-
-
+    await Tortoise.init(db_url="sqlite://mem", modules={"models": ["__main__"]})
+    print("!@#$%^ ---- DB from tortoise: ")
+    sql = get_schema_sql(Tortoise.get_connection("default"), safe=False)
+    print(sql)
+    print(await User.all().values("id", "username", "email", "password"))
+   # await Tortoise.generate_schemas()
+    date = datetime.utcnow
+    #user = await User.create(username="2amogus", email="2amogus1337@mail.ru", password="12345")
+    print("ass")
+    #print(user_pydanticIn.dict(exlude_unset=True))
+    print("!@#$%^ ---- DB from pydantic: ")
+    #debug(User)
+    user11 = await user1.from_queryset(User.all())
+    print(user11.dict())
 
 if __name__ == "__main__":
-    run_async(runn())
+    run_async(runn())"""

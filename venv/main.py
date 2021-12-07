@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request, Form, Query
 from fastapi.responses import HTMLResponse
 from fastapi.responses import PlainTextResponse
 from tortoise import Tortoise
+from tortoise.contrib.fastapi import register_tortoise
 
 import H_p
 from fastapi.staticfiles import StaticFiles
@@ -11,16 +12,39 @@ from babel.plural import PluralRule
 import glob
 import json
 
-from etuWEB import models
-from etuWEB.models import User
+from etuWEB.models import *
 from typing import List
+from etuWEB.authentication import (get_password_hash)
+
+# signails
+from tortoise.signals import post_save
+from typing import List, Optional, Type
+from tortoise import BaseDBAsyncClient
 
 import trans
 
 app = FastAPI()
+
+
 # uvicorn main:app --reload
 # sudo lsof -t -i tcp:8000 | xargs kill -9
 # https://phrase.com/blog/posts/fastapi-i18n/amp/
+
+
+@post_save(User)
+async def create_user_ch(
+        sender: "Type[User]",
+        instance: User,
+        created: bool,
+        using_db: "Optional[BaseDBAsyncClient]",
+        update_fields: List[str]) -> None:
+    if created:
+        user_ch_obj = await User_in_chat.create(
+            user_name=instance.username, owner=instance)
+        await user_ch_pydantic.from_tortoise_orm(user_ch_obj)
+        # send email functionality
+        # await send_email([instance.email], instance)
+
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -96,34 +120,39 @@ async def memes_get(request: Request, locale: str = Query("en", description="Que
 async def memes(request: Request, action: str = Form(...)):
     print("{2}")
     locale = default_fallback
+    result = {"request": request}
     if action == 'eng-lang':
         print("en")
-        result = {"request": request}
         result.update(languages['en'])
     elif action == 'rus-lang':
         print("ru")
-        result = {"request": request}
         result.update(languages['ru'])
     else:
         print("шотонетак")
-        result = {"request": request}
         result.update(languages[locale])
     return templates.TemplateResponse("index2.html", result)
 
-@app.get("/memes/reg")
-async def reg():
-    print(1)
-    await models.runn()
-    print(2)
-    return "aboba"
+
+@app.post('/registration')
+async def user_registration(user: user_pydanticIn):
+    user_info = user.dict(exclude_unset=True)
+    user_info['password'] = get_password_hash(user_info['password'])
+    user_obj = await User.create(**user_info)
+    new_user = await user_pydantic.from_tortoise_orm(user_obj)
+    print(user.dict())
+    return {"status": "ok",
+            "data":
+                f"Hello {new_user.username} thanks for choosing our services. Please check your emai"
+                f"l inbox and click on the link to confirm your registration."}
 
 
-
-
-
-
-
-
+register_tortoise(
+    app,
+    db_url='sqlite://database.sqlite3',
+    modules={'models': ['etuWEB.models']},
+    generate_schemas=True,
+    add_exception_handlers=True
+)
 
 """
     if action == 'eng-lang':
@@ -143,7 +172,6 @@ async def reg():
         result.update(languages[locale])
         return templates.TemplateResponse("index2.html", result)"""
 
-
 """@app.get("/All1/")
 async def aboltus(request: Request):
     return All1(request, "en")"""
@@ -161,7 +189,7 @@ async def all_page():
 
 @app.get("/Billy/", response_class=HTMLResponse)
 async def billy_page():
-    return H_p.billy_html
+    return H_p.Billy
 
 
 @app.get("/Rybov/", response_class=HTMLResponse)
@@ -184,6 +212,27 @@ async def filth_page():
     return H_p.filth_html
 
 
+@app.get("/Papi4/", response_class=HTMLResponse)
+async def papi4_get(request: Request, locale: str = Query("en", description="Query inf")):
+    result = {"request": request}
+    result.update(languages[locale])
+    return templates.TemplateResponse("Papi4.html", result)
+
+
+@app.post("/Papi4/")
+async def papi4(request: Request, action: str = Form(...)):
+    locale = default_fallback
+    result = {"request": request}
+    if action == 'eng-lang':
+        result.update(languages['en'])
+    elif action == 'rus-lang':
+        result.update(languages['ru'])
+    else:
+        result.update(languages[locale])
+    return templates.TemplateResponse("Papi4.html", result)
+
+
+"""
 @app.get("/Text/ru1", response_class=PlainTextResponse)
 async def text():
     meme = "— Писать курсач больнее, чем родить ребёнка. \n— <Ты когда-нибудь рожал ребенка?>\n" \
@@ -200,7 +249,7 @@ async def trans_text():
     return trans_meme
 
 
-"""
+
 @app.get("/Text/en1", response_class=PlainTextResponse)
 async def trans1_text():
     meme = "— Писать курсач больнее, чем родить ребёнка. \n— <Ты когда-нибудь рожал ребенка?>\n" \
@@ -208,27 +257,4 @@ async def trans1_text():
            "\n<А напишу-ка я ещё один курсач>!"
     print(trans(meme))
     return trans(meme)
-
-
-
-"""
-
-
-"""
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
 """

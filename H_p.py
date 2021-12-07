@@ -1,11 +1,11 @@
 #HTML pages
-billy_html = """
+Billy = """
 <html>
         <head>
             <title>Billy</title>
         </head>
         <body>
-            <h1>Billy Herrington</h1>
+            <h1>Билли Херрингтон</h1>
             <img src=https://steamuserimages-a.akamaihd.net/ugc/955223561486116146/82DB8D17C9128620EB49C3CB1F7A36E65B393AA7/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false
                 width="750"
                 height="750">
@@ -88,6 +88,20 @@ filth_html ="""<html>
                 height="867">
         </body>
     </html>
+"""
+papi4 = """
+<html><body>
+    <head>
+        <title>papi4</title>
+    </head>
+    <form method="post">
+            <input type="submit" name="action" value="eng-lang">
+            <input type="submit" name="action" value="rus-lang">
+    </form>
+    <h2>{{ papanya }}</h2>
+    <img src="{{ url_for('static', path='/papi4.jpg') }}" style="width:100%;margin-bottom:-6px">
+    <h3>{{ about_papi4 }}</h3></body>
+</html>
 """
 
 

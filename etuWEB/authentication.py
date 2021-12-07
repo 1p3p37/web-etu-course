@@ -2,7 +2,7 @@ from dotenv import dotenv_values
 import jwt
 from fastapi import (FastAPI, Depends, HTTPException, status)
 
-from models import (User, user_pydantic, user_pydanticIn)
+from etuWEB.models import (User, user_pydantic, user_pydanticIn)
 from passlib.context import CryptContext
 
 config_credentials = dict(dotenv_values(".env"))
