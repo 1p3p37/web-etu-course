@@ -77,7 +77,7 @@ async def memes_get(request: Request, locale: str = Query("en", description="Que
 
 @app.post("/memes/")
 async def memes(request: Request, action: str = Form(...)):
-    print("{2}")
+    print("{2}-")
     locale = default_fallback
     result = {"request": request}
     if action == 'eng-lang':
