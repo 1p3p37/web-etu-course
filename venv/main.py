@@ -65,47 +65,6 @@ for lang in language_list:
     with open(lang, 'r', encoding='utf8') as file:
         languages[lang_code] = json.load(file)
 
-"""translations = get_gettext_translations()
-env = jinja2.Environment(extensions=["jinja2.ext.i18n"])
-env.install_gettext_translations(translations)
-"""
-
-# post
-"""
-@app.get(f"/All1/", response_class=HTMLResponse)
-#async def All1(request: Request, locale: str = None ):
-async def All1(request: Request, locale: str = Query("en", description="Query inf")):
-    print("{} | | |  _---------_________-------------_________________---_____ ||||||||||||||||||||||")
-
-    if (locale not in locales) or (locale is None):
-        locale = default_fallback
-        print("biba")
-
-    result = {"request": request}
-    result.update(languages[locale])
-    print(result)
-    return templates.TemplateResponse("index.html", result)
-
-
-@app.post("/All2/{same}", response_class=HTMLResponse)
-#async def All2get(request: Request, same1: str = Query("en", description="Query inf"), same: str):
-async def All2get(request: Request, same: str):
-    print("{} | | |  _---------_________-------------_________________---_____ |||||||||||||||||||||||||||||||||||||||")
-    if same == 'eng-lang':
-        print("1aBOBOBAAA BA")
-        locale = default_fallback
-    elif same == 'rus-lang':
-        print("2aABOBUSA")
-        locale = 'ru'
-    else:
-        locale = default_fallback
-    result = {"request": request}
-    result.update(languages[locale])
-    print(result)
-    return templates.TemplateResponse("index2.html", result)
-
-"""
-
 
 @app.get("/memes/", response_class=HTMLResponse)
 async def memes_get(request: Request, locale: str = Query("en", description="Query inf")):
@@ -153,28 +112,6 @@ register_tortoise(
     generate_schemas=True,
     add_exception_handlers=True
 )
-
-"""
-    if action == 'eng-lang':
-        print("1aBOBOBAAA BA")
-        locale = default_fallback
-        result = {"request": request}
-        result.update(languages[locale])
-        return templates.TemplateResponse("index2.html", result)
-    elif action == 'rus-lang':
-        print("2aBOBOBAAA BA")
-        locale = 'ru'
-        result = {"request": request}
-        result.update(languages[locale])
-        return templates.TemplateResponse("index2.html", result)
-    else:
-        result = {"request": request}
-        result.update(languages[locale])
-        return templates.TemplateResponse("index2.html", result)"""
-
-"""@app.get("/All1/")
-async def aboltus(request: Request):
-    return All1(request, "en")"""
 
 
 @app.get("/")
@@ -230,31 +167,3 @@ async def papi4(request: Request, action: str = Form(...)):
     else:
         result.update(languages[locale])
     return templates.TemplateResponse("Papi4.html", result)
-
-
-"""
-@app.get("/Text/ru1", response_class=PlainTextResponse)
-async def text():
-    meme = "— Писать курсач больнее, чем родить ребёнка. \n— <Ты когда-нибудь рожал ребенка?>\n" \
-           "— Нет, но женщины иногда говорят <Давай заведем ещё одного>, но ни один студент не скажет " \
-           "\n<А напишу-ка я ещё один курсач>!"
-    return meme
-
-
-@app.get("/Text/en", response_class=PlainTextResponse)
-async def trans_text():
-    trans_meme = "— Writing a coursework is more painful than having a baby. \n— <Have you ever had a baby?>\n" \
-                 "— No, but women sometimes say <Let's have another one>, but no student will say\n" \
-                 "<I'll write another coursework>!"
-    return trans_meme
-
-
-
-@app.get("/Text/en1", response_class=PlainTextResponse)
-async def trans1_text():
-    meme = "— Писать курсач больнее, чем родить ребёнка. \n— <Ты когда-нибудь рожал ребенка?>\n" \
-           "— Нет, но женщины иногда говорят <Давай заведем ещё одного>, но ни один студент не скажет " \
-           "\n<А напишу-ка я ещё один курсач>!"
-    print(trans(meme))
-    return trans(meme)
-"""
